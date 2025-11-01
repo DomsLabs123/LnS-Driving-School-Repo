@@ -138,9 +138,22 @@ function ScheduleManagement() {
 
             {/* Step 2: If TDC, show session choices */}
             {selectedCategory === "TDC" && (
-              <div className="border rounded-lg p-4 bg-card">
+              <div className="border rounded-lg p-4 bg-card space-y-3">
+                <p className="text-center text-sm text-primary font-semibold mb-3">
+                  📚 Theoretical Driving Course (TDC)
+                </p>
+
+                <div className="text-left space-y-2">
+                  <p className="text-sm">
+                    <strong>Instructor:</strong> Mr. Renato Cabeltes
+                  </p>
+                  <p className="text-sm">
+                    <strong>Duration:</strong> 15 hours (split into 2 sessions)
+                  </p>
+                </div>
+
                 {date ? (
-                  <div className="space-y-3">
+                  <div className="space-y-3 mt-4">
                     {sessions.map((session) => {
                       const Icon = session.icon;
                       return (
@@ -177,7 +190,6 @@ function ScheduleManagement() {
               </div>
             )}
 
-            {/* Step 2: If Practical, show sub-options */}
             {selectedCategory === "Practical" && (
               <div className="border rounded-lg p-4 bg-card space-y-3">
                 <p className="text-center text-sm text-primary font-semibold mb-3">
@@ -186,20 +198,93 @@ function ScheduleManagement() {
 
                 {date ? (
                   <>
-                    <Button
-                      variant={selectedPracticalType === "4xWeek" ? "default" : "outline"}
-                      className="w-full justify-start py-6"
-                      onClick={() => setSelectedPracticalType("4xWeek")}
-                    >
-                      4 Times a Week, 2 Hours a Day
-                    </Button>
-                    <Button
-                      variant={selectedPracticalType === "2xWeek" ? "default" : "outline"}
-                      className="w-full justify-start py-6"
-                      onClick={() => setSelectedPracticalType("2xWeek")}
-                    >
-                      2 Times a Week, 4 Hours a Day
-                    </Button>
+                    {/* Step 1: Choose schedule type (4xWeek or 2xWeek) */}
+                    {!selectedPracticalType && (
+                      <>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start py-6"
+                          onClick={() => setSelectedPracticalType("4xWeek")}
+                        >
+                          4 Times a Week, 2 Hours a Day
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start py-6"
+                          onClick={() => setSelectedPracticalType("2xWeek")}
+                        >
+                          2 Times a Week, 4 Hours a Day
+                        </Button>
+                      </>
+                    )}
+
+                    {/* Step 2: If a schedule type is selected, show session + instructor */}
+                    {selectedPracticalType && (
+                      <div className="space-y-4">
+                        <div className="text-left">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Choose Time Session
+                          </label>
+                          <div className="space-y-3">
+                            <Button
+                              variant={selectedSession === "morning" ? "default" : "outline"}
+                              className="w-full justify-start py-6"
+                              onClick={() => setSelectedSession("morning")}
+                            >
+                              Morning Session (8:00 AM - 12:00 PM)
+                            </Button>
+                            <Button
+                              variant={selectedSession === "afternoon" ? "default" : "outline"}
+                              className="w-full justify-start py-6"
+                              onClick={() => setSelectedSession("afternoon")}
+                            >
+                              Afternoon Session (1:00 PM - 5:00 PM)
+                            </Button>
+                          </div>
+                        </div>
+
+
+                        {/* Instructor Dropdown */}
+                        {selectedSession && (
+                          <div className="mt-4 text-left">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Select Instructor
+                            </label>
+                            <select
+                              className="w-full border rounded-lg p-3 bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+                              onChange={(e) =>
+                                setSelectedPracticalType((prev) => ({
+                                  ...prev,
+                                  instructor: e.target.value,
+                                }))
+                              }
+                              defaultValue=""
+                            >
+                              <option value="" disabled>
+                                -- Choose an Instructor --
+                              </option>
+                              <option value="Mr. Alfe Paculba">Mr. Alfe Paculba</option>
+                              <option value="Mr. TJ Barilla">Mr. TJ Barilla</option>
+                              <option value="Mr. Diogenes Solito">Mr. Diogenes Solito</option>
+                              <option value="Mr. Renato Cabeltes">Mr. Renato Cabeltes</option>
+                            </select>
+                          </div>
+                        )}
+
+                        {/* Back button */}
+                        <div className="flex justify-end pt-3">
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedPracticalType(null);
+                              setSelectedSession(null);
+                            }}
+                          >
+                            ← Back
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
@@ -208,6 +293,8 @@ function ScheduleManagement() {
                 )}
               </div>
             )}
+
+
           </div>
         </div>
 
@@ -226,8 +313,8 @@ function ScheduleManagement() {
                 {selectedCategory === "TDC"
                   ? sessions.find((s) => s.id === selectedSession)?.name
                   : selectedPracticalType === "4xWeek"
-                  ? "4 Times a Week, 2 Hours a Day"
-                  : "2 Times a Week, 4 Hours a Day"}
+                    ? "4 Times a Week, 2 Hours a Day"
+                    : "2 Times a Week, 4 Hours a Day"}
               </span>
             </AlertDescription>
           </Alert>
